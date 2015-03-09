@@ -1,48 +1,88 @@
 \section*{Abstract}
 
-Real-time web applications need to be highly concurrent, and to scale over a large cluster.
-% This is achieved through parallelism.
-We identify two types of parallelism to meet such requirements.
-% Data parallelism and pipeline parallelism.
-Data parallelism replicates the whole logic to process each request in a thread \cite{Behren2003}.
-Pipeline parallelism slices logic into stages, each on an independent thread \cite{Ousterhout1996}.
-We believe the two designs are on two ends of a design spectrum; and each application requires a specific combination of the two designs.
-SEDA \cite{Welsh2000}, Storm and Spark are frameworks to design such combinations.
+Web applications evolve constantly, both in features and in performance.
+At first, the application evolution is dominated by the need for features.
+The development team logically organizes the application in modules.
+By keeping modules lights and decoupled, they never get overwhelmed by the growing complexity of the application.
+But the need for performance grows with the audience of the application.
+At some point it is necessary to organize the code differently to leverage the parallelism of clusters.
+A particularly efficient solution is to slice the logic into stages to form a pipeline \cite{Welsh2000}.
 
-The two types of parallelism reveals the duality of threads.
-% Logical threads and execution threads.
-Data parallelism uses a logical thread for each request.
-It defines an encapsulation for the logic of processing a request.
-Pipeline parallelism uses an execution thread for each core.
-It leverages parallelism.
-The motives to use logical threads and execution threads are opposite.
-We argue that it is a mistake to map the former onto the latter.
+Both organizations are carried manually over the source code, and interfere with each other.
+We believe these interferences freeze the evolution, and are an obstacle for the economic growth.
+We propose to automate the slicing process.
+It would allow developers to keep a coherent organization of modules, while beneficing from the efficiency of the pipeline solution.
+It removes the economic obstacles.
 
-Pipeline parallelism implies to manually slice an application for its deployment.
-Because it is a manual process, it implies to reduce logical threads to execution threads.
-We believe it limits the design and the evolution of a web application.
-Behren \textit{et. al.} state that \textit{it is a mistake to attempt high concurrency without help from the compiler} \cite{Behren2003}.
-Following this advice, we propose to automate this slicing process.
-We expect to improve design flexibility by allowing developers to dissociate logical from execution threads.
-% It allows developers to separate logical from execution threads for pipeline parallelism.
-For this automation, we resolved two main issues.
-Execution distribution and memory distribution.
+We observe a resemblance between Javascript and pipeline.
+Javascript popularity recently exploded, in part due to the execution model Node.js.
+The latter is based on an event-loop and is efficient compared to existing technologies \cite{Lei2014}.
+An event-loop is a pipeline executing on a single-core.
+We investigate this idea to transform a single event-loop into a fully parallel pipeline.
 
-After decades of improvements, the event and the thread model are now almost alike for a single core \cite{Adya2002}.
-Still, the event model conserves a particularity.
+An event loop triggers handlers to react on events.
 Event handlers end without return, they asynchronously trigger the next handler execution.
-% Event handlers end without return.
-% The next handler asynchronously continues the execution.
-% Their executions are independent. % as long as the causality is conserved.
 The call stacks of two handlers are disjoints.
-Thus, it is possible to distribute the execution on multiple machines, as long as the causality is preserved.
+Thus, it is possible to parallelize their execution, as long as the causality is preserved.
+Every event handlers becomes a stage in the pipeline.
 
-Each distributed handler needs to access the shared memory.
-Web applications still heavily rely on single databases to store the whole state.
-With recent trends around in-memory caches, we believe it is now viable to bring closer the logic and its state.
-We choose to partition and distribute the memory.
-We detect the dependencies of each handlers through static analysis.
-The handlers communicate through a one way flow of messages to exchange the shared states.
+However, the memory is global, and holds both the communications between the handlers, and the state of each handler.
+In a mono-thread execution model like Node.js, the atomic execution of handlers make synchronization mechanisms useless \cite{Adya2002}.
+To parallelize the handlers, %
+% we need to reproduce the exclusivity on memory, and the communications.
+we isolate the state of each handler to allow exclusivity; and %
+we identify their communications to reproduce a one way flow of messages.
 
 We built a first incomplete compiler as a proof of concept.
-After successful results with custom applications, we are now on the process of building a complete compiler to transform real applications.
+After successful results with custom applications, we are building a complete compiler to transform real applications.
+
+
+
+
+
+% Real-time web applications need to be highly concurrent, and to scale over a large cluster.
+% % This is achieved through parallelism.
+% We identify two types of parallelism to meet such requirements.
+% % Data parallelism and pipeline parallelism.
+% Data parallelism replicates the whole logic to process each request in a thread \cite{Behren2003}.
+% Pipeline parallelism slices logic into stages, each on an independent thread \cite{Ousterhout1996}.
+% We believe the two designs are on two ends of a design spectrum; and each application requires a specific combination of the two designs.
+% SEDA \cite{Welsh2000}, Storm and Spark are frameworks to design such combinations.
+
+% The two types of parallelism reveals the duality of threads.
+% % Logical threads and execution threads.
+% Data parallelism uses a logical thread for each request.
+% It defines an encapsulation for the logic of processing a request.
+% Pipeline parallelism uses an execution thread for each core.
+% It leverages parallelism.
+% The motives to use logical threads and execution threads are opposite.
+% We argue that it is a mistake to map the former onto the latter.
+
+% Pipeline parallelism implies to manually slice an application for its deployment.
+% Because it is a manual process, it implies to reduce logical threads to execution threads.
+% We believe it limits the design and the evolution of a web application.
+% Behren \textit{et. al.} state that \textit{it is a mistake to attempt high concurrency without help from the compiler} \cite{Behren2003}.
+% Following this advice, we propose to automate this slicing process.
+% We expect to improve design flexibility by allowing developers to dissociate logical from execution threads.
+% % It allows developers to separate logical from execution threads for pipeline parallelism.
+% For this automation, we resolved two main issues.
+% Execution distribution and memory distribution.
+
+% After decades of improvements, the event and the thread model are now almost alike for a single core \cite{Adya2002}.
+% Still, the event model conserves a particularity.
+% Event handlers end without return, they asynchronously trigger the next handler execution.
+% % Event handlers end without return.
+% % The next handler asynchronously continues the execution.
+% % Their executions are independent. % as long as the causality is conserved.
+% The call stacks of two handlers are disjoints.
+% Thus, it is possible to distribute the execution on multiple machines, as long as the causality is preserved.
+
+% Each distributed handler needs to access the shared memory.
+% Web applications still heavily rely on single databases to store the whole state.
+% With recent trends around in-memory caches, we believe it is now viable to bring closer the logic and its state.
+% We choose to partition and distribute the memory.
+% We detect the dependencies of each handlers through static analysis.
+% The handlers communicate through a one way flow of messages to exchange the shared states.
+
+% We built a first incomplete compiler as a proof of concept.
+% After successful results with custom applications, we are now on the process of building a complete compiler to transform real applications.
