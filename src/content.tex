@@ -1,6 +1,6 @@
 \section*{Abstract}
 
-Real-time web applications needs to be highly concurrent, and to scale over a large cluster.
+Real-time web applications need to be highly concurrent, and to scale over a large cluster.
 % This is achieved through parallelism.
 We identify two types of parallelism to meet such requirements.
 % Data parallelism and pipeline parallelism.
@@ -21,7 +21,7 @@ We argue that it is a mistake to map the former onto the latter.
 Pipeline parallelism implies to manually slice an application for its deployment.
 Because it is a manual process, it implies to reduce logical threads to execution threads.
 We believe it limits the design and the evolution of a web application.
-Behren \textit{et. al.} stated that \textit{it is a mistake to attempt high concurrency without help from the compiler} \cite{Behren2003}.
+Behren \textit{et. al.} state that \textit{it is a mistake to attempt high concurrency without help from the compiler} \cite{Behren2003}.
 Following this advice, we propose to automate this slicing process.
 We expect to improve design flexibility by allowing developers to dissociate logical from execution threads.
 % It allows developers to separate logical from execution threads for pipeline parallelism.
