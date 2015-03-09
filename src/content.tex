@@ -1,0 +1,48 @@
+\section*{Abstract}
+
+Real-time web applications needs to be highly concurrent, and to scale over a large cluster.
+% This is achieved through parallelism.
+We identify two types of parallelism to meet such requirements.
+% Data parallelism and pipeline parallelism.
+Data parallelism replicates the whole logic to process each request in a thread \cite{Behren2003}.
+Pipeline parallelism slices logic into stages, each on an independent thread \cite{Ousterhout1996}.
+We believe the two designs are on two ends of a design spectrum; and each application requires a specific combination of the two designs.
+SEDA \cite{Welsh2000}, Storm and Spark are frameworks to design such combinations.
+
+The two types of parallelism reveals the duality of threads.
+% Logical threads and execution threads.
+Data parallelism uses a logical thread for each request.
+It defines an encapsulation for the logic of processing a request.
+Pipeline parallelism uses an execution thread for each core.
+It leverages parallelism.
+The motives to use logical threads and execution threads are opposite.
+We argue that it is a mistake to map the former onto the latter.
+
+Pipeline parallelism implies to manually slice an application for its deployment.
+Because it is a manual process, it implies to reduce logical threads to execution threads.
+We believe it limits the design and the evolution of a web application.
+Behren \textit{et. al.} stated that \textit{it is a mistake to attempt high concurrency without help from the compiler} \cite{Behren2003}.
+Following this advice, we propose to automate this slicing process.
+We expect to improve design flexibility by allowing developers to dissociate logical from execution threads.
+% It allows developers to separate logical from execution threads for pipeline parallelism.
+For this automation, we resolved two main issues.
+Execution distribution and memory distribution.
+
+After decades of improvements, the event and the thread model are now almost alike for a single core \cite{Adya2002}.
+Still, the event model conserves a particularity.
+Event handlers end without return, they asynchronously trigger the next handler execution.
+% Event handlers end without return.
+% The next handler asynchronously continues the execution.
+% Their executions are independent. % as long as the causality is conserved.
+The call stacks of two handlers are disjoints.
+Thus, it is possible to distribute the execution on multiple machines, as long as the causality is preserved.
+
+Each distributed handler needs to access the shared memory.
+Web applications still heavily rely on single databases to store the whole state.
+With recent trends around in-memory caches, we believe it is now viable to bring closer the logic and its state.
+We choose to partition and distribute the memory.
+We detect the dependencies of each handlers through static analysis.
+The handlers communicate through a one way flow of messages to exchange the shared states.
+
+We built a first incomplete compiler as a proof of concept.
+After successful results with custom applications, we are now on the process of building a complete compiler to transform real applications.

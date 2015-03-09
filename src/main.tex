@@ -1,0 +1,104 @@
+\documentclass[10pt]{article}
+
+\usepackage[a4paper, total={6.5in, 9in}]{geometry}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
+\usepackage[english, french]{babel}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{backnaur}
+
+\input{utils/code}
+\input{utils/macros}
+
+\usepackage[hyperref=true,%
+            url=false,%
+            isbn=false,%
+            style=numeric,%
+            maxcitenames=3,%
+            maxbibnames=100,%
+            backend=biber,%
+            block=none]{biblatex}
+
+\bibliography{../src/bib/OS.bib}
+\bibliography{../src/bib/Flow-Based Programming.bib}
+\bibliography{../src/bib/Functional Programming-Functional Reactive Programming.bib}
+\bibliography{../src/bib/Stream.bib}
+\bibliography{../src/bib/Dataflow.bib}
+\bibliography{../src/bib/Web & Social Networks.bib}
+\bibliography{../src/bib/Others.bib}
+\bibliography{../src/bib/Actor Model.bib}
+\bibliography{../src/bib/Misc.bib}
+\bibliography{../src/bib/Parallelisation.bib}
+\bibliography{../src/bib/Others.bib}
+\bibliography{../src/bib/Distributed Systems.bib}
+\bibliography{../src/bib/Compilation.bib}
+\bibliography{../src/bib/TAJS.bib}
+\bibliography{../src/bib/Javascript-static analysis.bib}
+\bibliography{../src/bib/Sync-Async.bib}
+
+
+\pagenumbering{gobble}
+
+\begin{document}
+
+
+\title{%
+{Decouple deployment from application logic for web services}%
+% \textbf{Deployement and logic modularities should be distinct}%
+% \textbf{Manual slicing for pipeline parallelism}%
+% \textbf{Relieve the developer from deployement modularization}%
+% \textbf{Decouple logical threads from execution threads}%
+% \textbf{Automatic pipeline parallelism for web applications}%
+% \textbf{Automatic scalability for highly-concurrent web services}
+}
+
+\author{
+  Etienne Brodu\\
+  \textsf{\normalsize{etienne.brodu@insa-lyon.fr}}\\
+  \textsf{\small{Université de Lyon, INRIA,}}\\
+  \textsf{\small{INSA-Lyon, CITI-INRIA,}}\\
+  \textsf{\small{F-69621, Villeurbanne, France}}
+  \and
+  Stéphane Frénot\\
+  \textsf{\normalsize{stephane.frenot@insa-lyon.fr}}\\
+  \textsf{\small{Université de Lyon, INRIA,}}\\
+  \textsf{\small{INSA-Lyon, CITI-INRIA,}}\\
+  \textsf{\small{F-69621, Villeurbanne, France}}
+  \and
+  Frédéric Oblé\\
+  \textsf{\normalsize{frederic.oble@worldline.com}}\\
+  \textsf{\small{Worldline}}\\
+  \textsf{\small{53 avenue Paul Krüger - CS 60195}}\\
+  \textsf{\small{69624 Villeurbanne Cedex}}
+}
+
+\date{}
+
+% \numberofauthors{2}
+% \author{
+% \alignauthor
+% Etienne Brodu, Stéphane Frénot\\
+%   \email{\textsf{\normalsize{\textit{firstname}.\textit{lastname}@insa-lyon.fr}}}\\
+%   \affaddr{\textsf{\small{IXXI – ENS Lyon}}}\\
+%   \affaddr{\textsf{\small{15 parvis René Descartes – BP 7000}}}\\
+%   \affaddr{\textsf{\small{69342 Lyon Cedex 07  FRANCE}}}
+% }
+
+\maketitle
+
+% \input{abstract}
+
+% \category{D.3.4}{Software Engineering}{Processors}[Code generation, Compilers, Run-time environments]
+% \terms{Compilation}
+% \keywords{Flow programming, Web, Javascript}
+
+\input{content}
+
+\printbibliography[]
+
+\end{document}
