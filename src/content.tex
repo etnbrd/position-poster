@@ -1,37 +1,58 @@
 \section*{Abstract}
 
-Web applications evolve constantly, both in features and in performance.
-At first, the application evolution is dominated by the need for features.
-The development team logically organizes the application in modules.
-By keeping modules lights and decoupled, they never get overwhelmed by the growing complexity of the application.
-But the need for performance grows with the audience of the application.
-At some point it is necessary to organize the code differently to leverage the parallelism of clusters.
-A particularly efficient solution is to slice the logic into stages to form a pipeline \cite{Welsh2000}.
+% Web applications must constantly evolve, both in features and in performance.
+% At first, the need for features is predominant.
+% The development team logically arrange the features in modules.
+% By keeping modules lights and decoupled, they avoid getting overwhelmed by the growing complexity of the application.
+% But the need for performance grows with the audience of the application.
+% At some point, the parallelism of a cluster becomes necessary.
+% The development team needs to organize the code differently.
+% A particularly efficient solution is to slice the logic into stages to form a parallel pipeline \cite{Welsh2000}.
 
-Both organizations are carried manually over the source code, and interfere with each other.
-We believe these interferences freeze the evolution, and are an obstacle for the economic growth.
-We propose to automate the slicing process.
-It would allow developers to keep a coherent organization of modules, while beneficing from the efficiency of the pipeline solution.
-It removes the economic obstacles.
+% Both the organizations in modules and in stages are carried manually over the source code.
+% We believe the two organizations interfere with each other.
+% The organization in stages freezes the organization in modules.
+% It limits the evolution of the application, thus impacts its economic growth.
+% To lift this limitation, we propose to automate the manual slicing in stages.
+% By keeping only one manual organization, we remove the interferences.
+% Developers could benefit from the efficiency of the pipeline solution to scale in performance; while keeping a coherent module organization to continue improving features.
 
-We observe a resemblance between Javascript and pipeline.
-Javascript popularity recently exploded, in part due to the execution model Node.js.
-The latter is based on an event-loop and is efficient compared to existing technologies \cite{Lei2014}.
-An event-loop is a pipeline executing on a single-core.
-We investigate this idea to transform a single event-loop into a fully parallel pipeline.
 
-An event loop triggers handlers to react on events.
-Event handlers end without return, they asynchronously trigger the next handler execution.
+
+
+
+
+The popularity of Javascript recently exploded.
+Most implementations of Javascript present an event-loop design.
+Node.js is an example.
+We believe this design is more efficient to build web applications than the classical thread approach \cite{Lei2014}.
+An event-loop uses a single-core execution, and a global memory.
+It relieves the developer from the synchronization burden, but limits the implementation to a single machine.
+When the desired throughput augments, latency increases.
+Physics currently prevents us from building CPU with faster clocks.
+Eventually, the only solution to keep a reasonable latency is to use multiple machines.
+A particularly efficient design to leverage this parallelism is to slice an application into stages to form a parallel pipeline \cite{Welsh2000}.
+However, slicing an application into stages is a costly operation when done manually.
+Every stage must be balanced to fit on a machine so as to avoid bottlenecks leading to wasted resources.
+Moreover, for important changes in the application, the slicing is reconsidered to keep the balance.
+
+We argue that an event-loop is similar to a parallel pipeline executing on a single-core.
+We propose to automatically isolate stages in the application logic.
+The resulting application can be distributed over a network of machines.
+We believe this work will later allow to automatically balance stages to maximize throughput with the available resources.
+
+% Transition
+
+An event loop invokes handlers to react on events.
+Handlers end without return, they asynchronously trigger the next handlers.
 The call stacks of two handlers are disjoints.
-Thus, it is possible to parallelize their execution, as long as the causality is preserved.
+Thus, it is possible to parallelize their execution, as long as causality is preserved.
 Every event handlers becomes a stage in the pipeline.
 
-However, the memory is global, and holds both the communications between the handlers, and the state of each handler.
-In a mono-thread execution model like Node.js, the atomic execution of handlers make synchronization mechanisms useless \cite{Adya2002}.
-To parallelize the handlers, %
-% we need to reproduce the exclusivity on memory, and the communications.
-we isolate the state of each handler to allow exclusivity; and %
-we identify their communications to reproduce a one way flow of messages.
+In a mono-thread execution model like Node.js, the memory is global.
+But the atomic execution of handlers removes the need for synchronization and isolation \cite{Adya2002}.
+The memory holds both the communications between the handlers, and their state.
+To parallelize the handlers, we isolate the state of each handler to reproduce exclusivity; and we identify their communications to reproduce a one way flow of messages.
 
 We built a first incomplete compiler as a proof of concept.
 After successful results with custom applications, we are building a complete compiler to transform real applications.
