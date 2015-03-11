@@ -26,22 +26,21 @@ The popularity of Javascript recently exploded.
 Most implementations of Javascript present an event-loop design.
 Node.js is an example.
 We believe this design is more efficient to build web applications than the classical thread approach \cite{Lei2014}.
-An event-loop uses a single-core execution, and a global memory.
-It relieves the developer from the synchronization burden, but limits the implementation to a single machine.
-When the desired throughput augments, latency increases.
+We argue that an event-loop is a pipeline executing on a single-core.
+It relieves the developer from the synchronization burden.
+But it limits the implementation to a single machine.
 Physics currently prevents us from building CPU with faster clocks.
+So, when the desired throughput augments, the machine struggles and the average latency increases.
+
 Eventually, the only solution to keep a reasonable latency is to use multiple machines.
 A particularly efficient design to leverage this parallelism is to slice an application into stages to form a parallel pipeline \cite{Welsh2000}.
 However, slicing an application into stages is a costly operation when done manually.
 Every stage must be balanced to fit on a machine so as to avoid bottlenecks leading to wasted resources.
-Moreover, for important changes in the application, the slicing is reconsidered to keep the balance.
+Moreover, for important changes in the application, the slicing must be reconsidered to keep the balance.
 
-We argue that an event-loop is similar to a parallel pipeline executing on a single-core.
 We propose to automatically isolate stages in the application logic.
 The resulting application can be distributed over a network of machines.
 We believe this work will later allow to automatically balance stages to maximize throughput with the available resources.
-
-% Transition
 
 An event loop invokes handlers to react on events.
 Handlers end without return, they asynchronously trigger the next handlers.
