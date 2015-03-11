@@ -27,7 +27,7 @@ Most implementations of Javascript present an event-loop design.
 Node.js is an example.
 We believe this design is more efficient to build web applications than the classical thread approach \cite{Lei2014}.
 We argue that an event-loop is a pipeline executing on a single-core.
-It relieves the developer from the synchronization burden.
+It relieves the developer from the synchronization burden, and is linearly scalable.
 But it limits the implementation to a single machine.
 Physics currently prevents us from building CPU with faster clocks.
 So, when the desired throughput augments, the machine struggles and the average latency increases.
@@ -49,7 +49,7 @@ Thus, it is possible to parallelize their execution, as long as causality is pre
 Every event handlers becomes a stage in the pipeline.
 
 In a mono-thread execution model like Node.js, the memory is global.
-But the atomic execution of handlers removes the need for synchronization and isolation \cite{Adya2002}.
+The atomic execution of handlers removes the need for synchronization and isolation \cite{Adya2002}.
 The memory holds both the communications between the handlers, and their state.
 To parallelize the handlers, we isolate the state of each handler to reproduce exclusivity; and we identify their communications to reproduce a one way flow of messages.
 
